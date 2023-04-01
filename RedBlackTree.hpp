@@ -179,7 +179,7 @@ public:
     return current;
   }
 
-  void insert(Ride ride) {
+  RBTNode *insert(Ride ride) {
     RBTNode *node = new RBTNode(ride);
     RBTNode *parent = nullptr;
     RBTNode *current = root;
@@ -188,9 +188,8 @@ public:
     if (root == nullptr) {
       root = node;
       node->color = BLACK;
-      return;
+      return node;
     }
-    cout << "here" << endl;
     while (current != nullptr) {
       parent = current;
 
@@ -210,6 +209,8 @@ public:
     }
 
     fixInsert(node);
+
+    return node;
   }
 
   void remove(int rideNumber) {

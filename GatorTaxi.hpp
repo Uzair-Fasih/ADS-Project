@@ -1,12 +1,20 @@
-#include "Ride.hpp"
 #include <bits/stdc++.h>
 
+#include "MinHeap.hpp"
+#include "RedBlackTree.hpp"
 using namespace std;
 
 class GatorTaxi {
+private:
+  MinHeap mh;
+  RedBlackTree rbt;
+
 public:
   void Print(int rideNumber) {
-    // Prints the triplet (rideNumber, rideCost, tripDuration)
+    auto node = rbt.search(rideNumber);
+    auto ride = node->ride;
+    cout << "(" << ride.rideNumber << ", " << ride.rideCost << ", "
+         << ride.tripDuration << ")" << endl;
   }
 
   void Print(int rideNumber1, int rideNumber2) {
@@ -14,9 +22,13 @@ public:
     // which rideNumber1 <= r_x <= rideNumber2
   }
 
-  void Insert(){int rideNumber, int rideCost, int rideDescription} {
-    Ride r = {rideNumber, rideCost, rideDescription};
-    // Here rideNumber must be unique
+  void Insert(int rideNumber, int rideCost, int rideDescription) {
+    Ride ride = {rideNumber, rideCost, rideDescription};
+    auto minHeapNode = mh.insert(ride);
+    auto rbtNode = rbt.insert(ride);
+
+    minHeapNode->external = rbtNode;
+    rbtNode->external = minHeapNode;
   }
 
   void GetNextRide() {
