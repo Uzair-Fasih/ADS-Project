@@ -219,7 +219,7 @@ public:
       return;
     }
 
-    if (node == root) {
+    if (node == root && node->left == nullptr && node->right == nullptr) {
       root = nullptr;
       return;
     }
@@ -323,6 +323,34 @@ public:
 
     if (node->ride.rideNumber < end) {
       printRange(node->right, start, end);
+    }
+  }
+
+  void printTree() { printTree(root); }
+
+  void printTree(RBTNode *node, int indent = 0, bool last = true) {
+    if (node != nullptr) {
+      cout << string(indent, ' ');
+
+      if (last) {
+        cout << "└─";
+        indent += 2;
+      } else {
+        cout << "├─";
+        indent += 3;
+      }
+
+      cout << "(" << node->ride.rideNumber << ", " << node->ride.rideCost
+           << ", " << node->ride.tripDuration << ")";
+
+      if (node->color == RED) {
+        cout << " (R)" << endl;
+      } else {
+        cout << " (B)" << endl;
+      }
+
+      printTree(node->left, indent, node->right == nullptr);
+      printTree(node->right, indent, true);
     }
   }
 };

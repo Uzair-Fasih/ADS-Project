@@ -6,12 +6,17 @@ using namespace std;
 
 class GatorTaxi {
 private:
+public:
   MinHeap mh;
   RedBlackTree rbt;
-
-public:
   void Print(int rideNumber) {
     auto node = rbt.search(rideNumber);
+
+    if (node == nullptr) {
+      cout << "(0,0,0)" << endl;
+      return;
+    }
+
     auto ride = node->ride;
     cout << "(" << ride.rideNumber << "," << ride.rideCost << ","
          << ride.tripDuration << ")" << endl;
@@ -25,6 +30,12 @@ public:
   }
 
   void Insert(int rideNumber, int rideCost, int rideDescription) {
+    auto preNode = rbt.search(rideNumber);
+    if (preNode != nullptr) {
+      cout << "Duplicate RideNumber" << endl;
+      return;
+    }
+
     Ride ride = {rideNumber, rideCost, rideDescription};
     auto minHeapNode = mh.insert(ride);
     auto rbtNode = rbt.insert(ride);

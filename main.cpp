@@ -14,16 +14,25 @@ int main() {
   gt.GetNextRide();
   gt.Insert(68, 40, 51);
 
+  // cout << "\n>" << endl;
+  // gt.rbt.printTree();
+
   gt.GetNextRide();
   gt.Print(1, 100);
-  gt.Print(53);
   gt.UpdateTrip(53, 15);
-  // gt.Insert(96, 28, 82);
-  // gt.Insert(73, 28, 56);
-  // gt.UpdateTrip(9, 88);
-  // gt.GetNextRide();
-  // gt.Print(9);
-  // gt.Insert(20, 49, 59);
-  // gt.Insert(62, 7, 10);
-  // gt.CancelRide(20);
+  gt.Insert(96, 28, 82);
+  gt.Insert(73, 28, 56);
+  gt.UpdateTrip(9, 88);
+  gt.GetNextRide();
+  gt.Print(9);
+  gt.Insert(20, 49, 59);
+  gt.Insert(62, 7, 10);
+  gt.CancelRide(20);
+
+  gt.Insert(25, 49, 46);
+  gt.UpdateTrip(62, 15);
+  gt.GetNextRide();
+  gt.Print(1, 100);
+  gt.Insert(53, 28, 19);
+  gt.Print(1, 100);
 }
