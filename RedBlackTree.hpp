@@ -1,35 +1,10 @@
-#ifndef RBT_HEADER
-#define RBT_HEADER
-
-#include "Ride.hpp"
+#include "Nodes.hpp"
 #include <bits/stdc++.h>
-
-enum Color { RED, BLACK };
-
-/**
- * @brief
- *
- */
-class RBTNode {
-public:
-  Ride ride;
-  Color color;
-  RBTNode *left;
-  RBTNode *right;
-  RBTNode *parent;
-
-  RBTNode(Ride ride) {
-    this->ride = ride;
-    color = RED;
-    left = nullptr;
-    right = nullptr;
-    parent = nullptr;
-  }
-};
+using namespace std;
 
 class RedBlackTree {
 private:
-  RBTNode *root;
+  RBTNode *root = nullptr;
 
   void leftRotate(RBTNode *node) {
     RBTNode *rightChild = node->right;
@@ -209,6 +184,13 @@ public:
     RBTNode *parent = nullptr;
     RBTNode *current = root;
 
+    // Check if root is nullptr
+    if (root == nullptr) {
+      root = node;
+      node->color = BLACK;
+      return;
+    }
+    cout << "here" << endl;
     while (current != nullptr) {
       parent = current;
 
@@ -221,9 +203,7 @@ public:
 
     node->parent = parent;
 
-    if (parent == nullptr) {
-      root = node;
-    } else if (ride.rideNumber < parent->ride.rideNumber) {
+    if (ride.rideNumber < parent->ride.rideNumber) {
       parent->left = node;
     } else {
       parent->right = node;
@@ -318,5 +298,3 @@ public:
     delete node;
   }
 };
-
-#endif

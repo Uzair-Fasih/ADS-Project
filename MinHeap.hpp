@@ -1,27 +1,6 @@
+#include "Nodes.hpp"
 #include <bits/stdc++.h>
-
-#ifndef MIN_HEAP_HEADER
-#define MIN_HEAP_HEADER
-
-#include "RedBlackTree.hpp"
-#include "Ride.hpp"
 using namespace std;
-
-/**
- * @brief Node implementation
- * Each node holds the ride information, a left and right pointer for the binary
- * min heap. An additional external node pointer to point to RBT
- */
-class MinHeapNode {
-public:
-  Ride ride;
-  RBTNode *external;
-
-  MinHeapNode(Ride ride) {
-    this->ride = ride;
-    external = nullptr;
-  }
-};
 
 class MinHeap {
 public:
@@ -112,5 +91,3 @@ public:
     return minRide;
   }
 };
-
-#endif
