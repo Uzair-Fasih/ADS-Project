@@ -213,10 +213,14 @@ public:
     return node;
   }
 
-  void remove(int rideNumber) {
-    RBTNode *node = search(rideNumber);
+  void remove(RBTNode *node) {
 
     if (node == nullptr) {
+      return;
+    }
+
+    if (node == root) {
+      root = nullptr;
       return;
     }
 
@@ -270,6 +274,7 @@ public:
         node->right->parent = replace;
       }
     } else {
+
       if (node->left != nullptr) {
         child = node->left;
       } else {
@@ -297,5 +302,27 @@ public:
     }
 
     delete node;
+  }
+
+  void printRange(int start, int end) { printRange(root, start, end); }
+
+  void printRange(RBTNode *node, int start, int end) {
+    if (node == nullptr) {
+      return;
+    }
+
+    if (node->ride.rideNumber > start) {
+      printRange(node->left, start, end);
+    }
+
+    if (node->ride.rideNumber >= start && node->ride.rideNumber <= end) {
+      cout << "(" << node->ride.rideNumber << "," << node->ride.rideCost << ","
+           << node->ride.tripDuration << ")"
+           << ",";
+    }
+
+    if (node->ride.rideNumber < end) {
+      printRange(node->right, start, end);
+    }
   }
 };

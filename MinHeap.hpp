@@ -42,15 +42,13 @@ public:
    * @brief Returns the Min Ride while also deleting it in the process
    * @return MinHeapNode
    */
-  Ride getMin() {
+  MinHeapNode *getMin() {
 
     if (nodes.empty()) {
-      cout << "Heap is Empty" << endl;
-      Ride r;
-      return r;
+      return nullptr;
     }
 
-    Ride minRide = nodes[0]->ride;
+    MinHeapNode *minRide = nodes[0];
     MinHeapNode *lastNode = nodes.back();
     nodes.pop_back();
 
@@ -89,5 +87,74 @@ public:
     }
 
     return minRide;
+  }
+
+  /**
+   * @brief Removes the specified node from the heap
+   * @param node The node to remove
+   */
+  void remove(MinHeapNode *node) {
+    // Find the index of the node to remove
+    int idx = -1;
+    for (int i = 0; i < nodes.size(); i++) {
+      if (nodes[i] == node) {
+        idx = i;
+        break;
+      }
+    }
+
+    if (idx == -1) {
+      // Node not found in the heap
+      return;
+    }
+
+    // Swap the node with the last node in the heap
+    swap(nodes[idx], nodes[nodes.size() - 1]);
+    nodes.pop_back();
+
+    if (idx == nodes.size()) {
+      // Removed node was the last node in the heap
+      return;
+    }
+
+    // Fix the heap by checking if the node needs to be bubbled up or down
+    int pIdx = (idx - 1) / 2;
+    while (idx > 0 &&
+           ((nodes[pIdx]->ride.rideCost > nodes[idx]->ride.rideCost) ||
+            ((nodes[pIdx]->ride).rideCost == (nodes[idx]->ride).rideCost &&
+             (nodes[pIdx]->ride).tripDuration >
+                 (nodes[idx]->ride).tripDuration))) {
+
+      swap(nodes[pIdx], nodes[idx]);
+      idx = pIdx;
+      pIdx = (idx - 1) / 2;
+    }
+
+    int lcIdx, rcIdx, scIdx;
+    while (true) {
+      lcIdx = 2 * idx + 1;
+      rcIdx = 2 * idx + 2;
+      scIdx = idx;
+
+      if (lcIdx < nodes.size() &&
+          ((nodes[lcIdx]->ride.rideCost < nodes[scIdx]->ride.rideCost) ||
+           ((nodes[lcIdx]->ride).rideCost == (nodes[scIdx]->ride).rideCost &&
+            (nodes[lcIdx]->ride).tripDuration <
+                (nodes[scIdx]->ride).tripDuration)))
+        scIdx = lcIdx;
+
+      if (rcIdx < nodes.size() &&
+          ((nodes[rcIdx]->ride.rideCost < nodes[scIdx]->ride.rideCost) ||
+           ((nodes[rcIdx]->ride).rideCost == (nodes[scIdx]->ride).rideCost &&
+            (nodes[rcIdx]->ride).tripDuration <
+                (nodes[scIdx]->ride).tripDuration)))
+        scIdx = rcIdx;
+
+      if (scIdx == idx)
+        break;
+
+      swap(nodes[idx], nodes[scIdx]);
+      idx = scIdx;
+    }
   }
 };
