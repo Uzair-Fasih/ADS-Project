@@ -1,0 +1,6 @@
+Insert(rideNumber, rideCost, tripDuration)
+Print(rideNumber)
+Print (rideNumber1,rideNumber2)
+UpdateTrip(rideNumber, newTripDuration)
+GetNextRide()
+CancelRide(rideNumber)
