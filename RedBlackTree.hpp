@@ -1,12 +1,15 @@
 #include "Nodes.hpp"
-#include <bits/stdc++.h>
-using namespace std;
 
 class RedBlackTree {
 private:
   RBTNode *root = nullptr;
 
   void leftRotate(RBTNode *node) {
+
+    if (node == nullptr) {
+      return;
+    }
+
     RBTNode *rightChild = node->right;
     node->right = rightChild->left;
 
@@ -29,6 +32,11 @@ private:
   }
 
   void rightRotate(RBTNode *node) {
+
+    if (node == nullptr) {
+      return;
+    }
+
     RBTNode *leftChild = node->left;
     node->left = leftChild->right;
 
@@ -54,9 +62,14 @@ private:
     RBTNode *parent = nullptr;
     RBTNode *grandparent = nullptr;
 
-    while (node != root && node->color == RED && node->parent->color == RED) {
+    while (node != root && node->color == RED && node->parent != nullptr &&
+           node->parent->color == RED) {
       parent = node->parent;
       grandparent = parent->parent;
+
+      if (grandparent == nullptr) { // added null pointer check
+        break;
+      }
 
       if (parent == grandparent->left) {
         RBTNode *uncle = grandparent->right;
@@ -107,11 +120,21 @@ private:
       if (node == node->parent->left) {
         RBTNode *sibling = node->parent->right;
 
+        if (sibling == nullptr) {
+          // Handle segmentation fault
+          break;
+        }
+
         if (sibling->color == RED) {
           sibling->color = BLACK;
           node->parent->color = RED;
           leftRotate(node->parent);
           sibling = node->parent->right;
+        }
+
+        if (sibling->left == nullptr || sibling->right == nullptr) {
+          // Handle segmentation fault
+          break;
         }
 
         if (sibling->left->color == BLACK && sibling->right->color == BLACK) {
@@ -134,11 +157,21 @@ private:
       } else {
         RBTNode *sibling = node->parent->left;
 
+        if (sibling == nullptr) {
+          // Handle segmentation fault
+          break;
+        }
+
         if (sibling->color == RED) {
           sibling->color = BLACK;
           node->parent->color = RED;
           rightRotate(node->parent);
           sibling = node->parent->left;
+        }
+
+        if (sibling->left == nullptr || sibling->right == nullptr) {
+          // Handle segmentation fault
+          break;
         }
 
         if (sibling->right->color == BLACK && sibling->left->color == BLACK) {
@@ -216,15 +249,21 @@ public:
       }
     }
 
-    // Finally add the node to the tree through the parent
-    node->parent = parent;
-    if (ride.rideNumber < parent->ride.rideNumber) {
-      parent->left = node;
+    // Check if parent is nullptr and set new node as root
+    if (parent == nullptr) {
+      root = node;
+      node->color = BLACK;
     } else {
-      parent->right = node;
+      // Add the node to the tree through the parent
+      node->parent = parent;
+      if (ride.rideNumber < parent->ride.rideNumber) {
+        parent->left = node;
+      } else {
+        parent->right = node;
+      }
+      fixInsert(node); // Rebalance the tree if needed
     }
 
-    fixInsert(node); // Rebalance the tree if needed
     return node;
   }
 
@@ -283,7 +322,9 @@ public:
         node->parent->right = replace;
       }
 
-      node->left->parent = replace;
+      if (node->left != nullptr) {
+        node->left->parent = replace;
+      }
 
       if (node->right != nullptr) {
         node->right->parent = replace;
@@ -340,34 +381,6 @@ public:
 
     if (node->ride.rideNumber < end) {
       getRange(node->right, start, end, rides);
-    }
-  }
-
-  void printTree() { printTree(root); }
-
-  void printTree(RBTNode *node, int indent = 0, bool last = true) {
-    if (node != nullptr) {
-      cout << string(indent, ' ');
-
-      if (last) {
-        cout << "└─";
-        indent += 2;
-      } else {
-        cout << "├─";
-        indent += 3;
-      }
-
-      cout << "(" << node->ride.rideNumber << ", " << node->ride.rideCost
-           << ", " << node->ride.tripDuration << ")";
-
-      if (node->color == RED) {
-        cout << " (R)" << endl;
-      } else {
-        cout << " (B)" << endl;
-      }
-
-      printTree(node->left, indent, node->right == nullptr);
-      printTree(node->right, indent, true);
     }
   }
 };

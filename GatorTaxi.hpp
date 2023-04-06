@@ -55,11 +55,11 @@ public:
     cout << endl;
   }
 
-  void Insert(int rideNumber, int rideCost, int rideDescription) {
+  bool Insert(int rideNumber, int rideCost, int rideDescription) {
     auto preNode = rbt.search(rideNumber);
     if (preNode != nullptr) {
       cout << "Duplicate RideNumber" << endl;
-      return;
+      return true;
     }
 
     Ride ride = {rideNumber, rideCost, rideDescription};
@@ -68,6 +68,8 @@ public:
 
     minHeapNode->external = rbtNode;
     rbtNode->external = minHeapNode;
+
+    return false;
   }
 
   void GetNextRide() {
@@ -88,10 +90,14 @@ public:
 
   void CancelRide(int rideNumber) {
     auto rbtNode = rbt.search(rideNumber);
-    rbt.remove(rbtNode);
+
+    if (rbtNode == nullptr) {
+      return;
+    }
+
     auto minHeapNode = rbtNode->external;
+    rbt.remove(rbtNode);
     mh.remove(minHeapNode);
-    // If exists, delete the ride with rideNumber
   }
 
   void UpdateTrip(int rideNumber, int new_tripDuration) {
@@ -103,13 +109,13 @@ public:
     // declined and removed from DS
     auto rbtNode = rbt.search(rideNumber);
     if (rbtNode == nullptr) {
-      cout << "No Bueno hombre" << endl;
       return;
     }
     auto ride = rbtNode->ride;
 
     if (new_tripDuration <= ride.tripDuration) {
       rbtNode->ride.tripDuration = new_tripDuration;
+      rbtNode->external->ride.tripDuration = new_tripDuration;
       return;
     } else {
       this->CancelRide(rideNumber);

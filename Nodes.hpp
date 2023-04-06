@@ -1,7 +1,3 @@
-
-#include <bits/stdc++.h>
-using namespace std;
-
 #ifndef NODES_HEADER
 #define NODES_HEADER
 

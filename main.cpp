@@ -58,8 +58,10 @@ int main(int argc, char *argv[]) {
       char delimiter;
       stringstream argStream(tokens[1]);
       argStream >> x >> delimiter >> y >> delimiter >> z;
-      gt.Insert(x, y, z);
-
+      auto err = gt.Insert(x, y, z);
+      if (err) {
+        break;
+      }
     } else if (tokens[0] == "GetNextRide") {
       gt.GetNextRide();
 
