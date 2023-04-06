@@ -15,7 +15,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-using namespace std;
 
 #include "GatorTaxi.hpp"
 
@@ -23,16 +22,16 @@ int main(int argc, char *argv[]) {
   GatorTaxi gt;
 
   if (argc < 2) {
-    cerr << "Please provide a filename as an argument" << endl;
+    std::cerr << "Please provide a filename as an argument" << std::endl;
     return 1;
   }
 
   // Open the input file
-  ifstream inputFile(argv[1]);
+  std::ifstream inputFile(argv[1]);
 
   // Check if the file was opened successfully
   if (!inputFile) {
-    cerr << "Unable to open input file" << endl;
+    std::cerr << "Unable to open input file" << std::endl;
     return 1;
   }
 
@@ -45,12 +44,12 @@ int main(int argc, char *argv[]) {
   }
 
   // Read each line of the input file
-  string line;
+  std::string line;
   while (getline(inputFile, line)) {
-    // Use a stringstream to split the line into tokens
-    stringstream ss(line);
-    string token;
-    vector<string> tokens;
+    // Use a std::stringstream to split the line into tokens
+    std::stringstream ss(line);
+    std::string token;
+    std::vector<std::string> tokens;
 
     while (getline(ss, token, '(')) {
       tokens.push_back(token);
@@ -66,7 +65,7 @@ int main(int argc, char *argv[]) {
       // Extract the three integer arguments
       int x, y, z;
       char delimiter;
-      stringstream argStream(tokens[1]);
+      std::stringstream argStream(tokens[1]);
       argStream >> x >> delimiter >> y >> delimiter >> z;
       auto err = gt.Insert(x, y, z);
       if (err) {
@@ -78,7 +77,7 @@ int main(int argc, char *argv[]) {
     } else if (tokens[0] == "Print") {
       // Extract the two integer arguments
       int x, y;
-      stringstream argStream(tokens[1]);
+      std::stringstream argStream(tokens[1]);
       argStream >> x;
       if (argStream.peek() == ',') {
         argStream.ignore();
@@ -94,19 +93,19 @@ int main(int argc, char *argv[]) {
       // Extract the two integer arguments
       int x, y;
       char delimiter;
-      stringstream argStream(tokens[1]);
+      std::stringstream argStream(tokens[1]);
       argStream >> x >> delimiter >> y;
       gt.UpdateTrip(x, y);
 
     } else if (tokens[0] == "CancelRide") {
       // Extract the integer argument
       int x;
-      stringstream argStream(tokens[1]);
+      std::stringstream argStream(tokens[1]);
       argStream >> x;
       gt.CancelRide(x);
 
     } else {
-      cerr << "Invalid input: " << line << endl;
+      std::cerr << "Invalid input: " << line << std::endl;
     }
   }
 

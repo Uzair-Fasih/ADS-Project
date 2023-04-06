@@ -87,7 +87,7 @@ private:
           }
 
           rightRotate(grandparent);
-          swap(parent->color, grandparent->color);
+          std::swap(parent->color, grandparent->color);
           node = parent;
         }
       } else {
@@ -106,7 +106,7 @@ private:
           }
 
           leftRotate(grandparent);
-          swap(parent->color, grandparent->color);
+          std::swap(parent->color, grandparent->color);
           node = parent;
         }
       }
@@ -366,22 +366,22 @@ public:
     delete node;
   }
 
-  void getRange(int start, int end, vector<Ride> &rides) {
+  void getRange(int start, int end, std::vector<Ride> &rides) {
     getRange(root, start, end, rides);
   }
 
   /**
    * @brief Get the rides within the range specified start and end. The rides
-   * are added to the rides vector passed by reference.The time complexity of
-   * using inorder traversal to get this range is O(k + log(n)), where k is the
-   * number of nodes in the range.
+   * are added to the rides std::vector passed by reference.The time complexity
+   * of using inorder traversal to get this range is O(k + log(n)), where k is
+   * the number of nodes in the range.
    *
    * @param node
    * @param start
    * @param end
    * @param rides
    */
-  void getRange(RBTNode *node, int start, int end, vector<Ride> &rides) {
+  void getRange(RBTNode *node, int start, int end, std::vector<Ride> &rides) {
     if (node == nullptr) {
       return;
     }

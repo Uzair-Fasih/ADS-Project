@@ -20,13 +20,13 @@ public:
     auto node = rbt.search(rideNumber);
 
     if (node == nullptr) {
-      cout << "(0,0,0)" << endl;
+      std::cout << "(0,0,0)" << std::endl;
       return;
     }
 
     auto ride = node->ride;
-    cout << "(" << ride.rideNumber << "," << ride.rideCost << ","
-         << ride.tripDuration << ")" << endl;
+    std::cout << "(" << ride.rideNumber << "," << ride.rideCost << ","
+              << ride.tripDuration << ")" << std::endl;
   }
 
   /**
@@ -38,23 +38,23 @@ public:
    * @param rideNumber2
    */
   void Print(int rideNumber1, int rideNumber2) {
-    vector<Ride> rides;
+    std::vector<Ride> rides;
     rbt.getRange(rideNumber1, rideNumber2, rides);
 
     for (int i = 0; i < rides.size(); i++) {
-      cout << "(" << rides[i].rideNumber << "," << rides[i].rideCost << ","
-           << rides[i].tripDuration << ")";
+      std::cout << "(" << rides[i].rideNumber << "," << rides[i].rideCost << ","
+                << rides[i].tripDuration << ")";
 
       if (i != rides.size() - 1) {
-        cout << ",";
+        std::cout << ",";
       }
     }
 
     if (rides.size() == 0) {
-      cout << "(0,0,0)";
+      std::cout << "(0,0,0)";
     }
 
-    cout << endl;
+    std::cout << std::endl;
   }
 
   /**
@@ -73,7 +73,7 @@ public:
     auto preNode = rbt.search(rideNumber);
 
     if (preNode != nullptr) {
-      cout << "Duplicate RideNumber" << endl;
+      std::cout << "Duplicate RideNumber" << std::endl;
       return true;
     }
 
@@ -100,7 +100,7 @@ public:
     auto minHeapNode = mh.getMin(); // Get the next ride in O(1) time
 
     if (minHeapNode == nullptr) {
-      cout << "No active ride requests" << endl;
+      std::cout << "No active ride requests" << std::endl;
       return;
     }
 
@@ -110,8 +110,8 @@ public:
     // O(log(n)) time
 
     rbt.remove(minHeapNode->external);
-    cout << "(" << ride.rideNumber << "," << ride.rideCost << ","
-         << ride.tripDuration << ")" << endl;
+    std::cout << "(" << ride.rideNumber << "," << ride.rideCost << ","
+              << ride.tripDuration << ")" << std::endl;
   }
 
   /**

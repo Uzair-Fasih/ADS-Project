@@ -1,10 +1,9 @@
 #include "Nodes.hpp"
-#include <bits/stdc++.h>
-using namespace std;
+#include <vector>
 
 class MinHeap {
 public:
-  vector<MinHeapNode *> nodes;
+  std::vector<MinHeapNode *> nodes;
 
   /**
    * @brief Inserts a new ride in the min heap.
@@ -30,7 +29,7 @@ public:
              (nodes[pIdx]->ride).tripDuration >
                  (nodes[idx]->ride).tripDuration))) {
 
-      swap(nodes[pIdx], nodes[idx]);
+      std::swap(nodes[pIdx], nodes[idx]);
       idx = pIdx;
       pIdx = (idx - 1) / 2;
     }
@@ -83,7 +82,7 @@ public:
       if (scIdx == idx)
         break;
 
-      swap(nodes[idx], nodes[scIdx]);
+      std::swap(nodes[idx], nodes[scIdx]);
       idx = scIdx;
     }
 
@@ -110,7 +109,7 @@ public:
     }
 
     // Swap the node with the last node in the heap
-    swap(nodes[idx], nodes[nodes.size() - 1]);
+    std::swap(nodes[idx], nodes[nodes.size() - 1]);
     nodes.pop_back();
 
     if (idx == nodes.size()) {
@@ -126,7 +125,7 @@ public:
              (nodes[pIdx]->ride).tripDuration >
                  (nodes[idx]->ride).tripDuration))) {
 
-      swap(nodes[pIdx], nodes[idx]);
+      std::swap(nodes[pIdx], nodes[idx]);
       idx = pIdx;
       pIdx = (idx - 1) / 2;
     }
@@ -154,7 +153,7 @@ public:
       if (scIdx == idx)
         break;
 
-      swap(nodes[idx], nodes[scIdx]);
+      std::swap(nodes[idx], nodes[scIdx]);
       idx = scIdx;
     }
   }
