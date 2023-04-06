@@ -1,38 +1,105 @@
 #include <bits/stdc++.h>
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 using namespace std;
 
 #include "GatorTaxi.hpp"
 
-int main() {
+int main(int argc, char *argv[]) {
   GatorTaxi gt;
-  gt.Insert(25, 98, 46);
-  gt.GetNextRide();
-  gt.GetNextRide();
-  gt.Insert(42, 17, 89);
-  gt.Insert(9, 76, 31);
-  gt.Insert(53, 97, 22);
-  gt.GetNextRide();
-  gt.Insert(68, 40, 51);
 
-  // cout << "\n>" << endl;
-  // gt.rbt.printTree();
+  if (argc < 2) {
+    cerr << "Please provide a filename as an argument" << endl;
+    return 1;
+  }
 
-  gt.GetNextRide();
-  gt.Print(1, 100);
-  gt.UpdateTrip(53, 15);
-  gt.Insert(96, 28, 82);
-  gt.Insert(73, 28, 56);
-  gt.UpdateTrip(9, 88);
-  gt.GetNextRide();
-  gt.Print(9);
-  gt.Insert(20, 49, 59);
-  gt.Insert(62, 7, 10);
-  gt.CancelRide(20);
+  // Open the input file
+  ifstream inputFile(argv[1]);
 
-  gt.Insert(25, 49, 46);
-  gt.UpdateTrip(62, 15);
-  gt.GetNextRide();
-  gt.Print(1, 100);
-  gt.Insert(53, 28, 19);
-  gt.Print(1, 100);
+  // Check if the file was opened successfully
+  if (!inputFile) {
+    cerr << "Unable to open input file" << endl;
+    return 1;
+  }
+
+  FILE *outFile = freopen("output_file.txt", "w", stdout);
+
+  // Check if the file was opened successfully
+  if (outFile == nullptr) {
+    fprintf(stderr, "Unable to open output file\n");
+    return 1;
+  }
+
+  // Read each line of the input file
+  string line;
+  while (getline(inputFile, line)) {
+    // Use a stringstream to split the line into tokens
+    stringstream ss(line);
+    string token;
+    vector<string> tokens;
+
+    while (getline(ss, token, '(')) {
+      tokens.push_back(token);
+    }
+
+    // Ensure that the line contains at least one token
+    if (tokens.empty()) {
+      continue;
+    }
+
+    // Determine which function to call based on the first token
+    if (tokens[0] == "Insert") {
+      // Extract the three integer arguments
+      int x, y, z;
+      char delimiter;
+      stringstream argStream(tokens[1]);
+      argStream >> x >> delimiter >> y >> delimiter >> z;
+      gt.Insert(x, y, z);
+
+    } else if (tokens[0] == "GetNextRide") {
+      gt.GetNextRide();
+
+    } else if (tokens[0] == "Print") {
+      // Extract the two integer arguments
+      int x, y;
+      stringstream argStream(tokens[1]);
+      argStream >> x;
+      if (argStream.peek() == ',') {
+        argStream.ignore();
+        argStream >> y;
+        // Call the Print function with the two extracted arguments
+        gt.Print(x, y);
+      } else {
+        // Call the Print function with the one extracted argument
+        gt.Print(x);
+      }
+
+    } else if (tokens[0] == "UpdateTrip") {
+      // Extract the two integer arguments
+      int x, y;
+      char delimiter;
+      stringstream argStream(tokens[1]);
+      argStream >> x >> delimiter >> y;
+      gt.UpdateTrip(x, y);
+
+    } else if (tokens[0] == "CancelRide") {
+      // Extract the integer argument
+      int x;
+      stringstream argStream(tokens[1]);
+      argStream >> x;
+      gt.CancelRide(x);
+
+    } else {
+      cerr << "Invalid input: " << line << endl;
+    }
+  }
+
+  // Close the input file
+  inputFile.close();
+
+  return 0;
 }

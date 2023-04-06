@@ -47,7 +47,7 @@ public:
 
   RBTNode(Ride ride) {
     this->ride = ride;
-    color = RED;
+    color = RED; // Newly created nodes are RED for most cases
     left = nullptr;
     right = nullptr;
     parent = nullptr;

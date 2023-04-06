@@ -74,7 +74,7 @@ private:
           }
 
           rightRotate(grandparent);
-          std::swap(parent->color, grandparent->color);
+          swap(parent->color, grandparent->color);
           node = parent;
         }
       } else {
@@ -93,7 +93,7 @@ private:
           }
 
           leftRotate(grandparent);
-          std::swap(parent->color, grandparent->color);
+          swap(parent->color, grandparent->color);
           node = parent;
         }
       }
@@ -165,6 +165,12 @@ private:
   }
 
 public:
+  /**
+   * @brief Searches for a node identified by the rideNumber much like a BST
+   *
+   * @param rideNumber
+   * @return RBTNode*
+   */
   RBTNode *search(int rideNumber) {
     RBTNode *current = root;
 
@@ -179,17 +185,27 @@ public:
     return current;
   }
 
+  /**
+   * @brief An insert operation for the red-black tree. This operation is
+   * executed in O(log(n)) time.
+   *
+   * @param ride
+   * @return RBTNode*
+   */
   RBTNode *insert(Ride ride) {
-    RBTNode *node = new RBTNode(ride);
-    RBTNode *parent = nullptr;
-    RBTNode *current = root;
+    RBTNode *node = new RBTNode(ride); // New node to be inserted
 
-    // Check if root is nullptr
+    // Check if root is nullptr and set new node as root
     if (root == nullptr) {
       root = node;
       node->color = BLACK;
       return node;
     }
+
+    RBTNode *parent = nullptr;
+    RBTNode *current = root;
+
+    // Identify an empty spot in the BST to insert the node
     while (current != nullptr) {
       parent = current;
 
@@ -200,16 +216,15 @@ public:
       }
     }
 
+    // Finally add the node to the tree through the parent
     node->parent = parent;
-
     if (ride.rideNumber < parent->ride.rideNumber) {
       parent->left = node;
     } else {
       parent->right = node;
     }
 
-    fixInsert(node);
-
+    fixInsert(node); // Rebalance the tree if needed
     return node;
   }
 
@@ -304,25 +319,27 @@ public:
     delete node;
   }
 
-  void printRange(int start, int end) { printRange(root, start, end); }
+  void getRange(int start, int end, vector<string> &rides) {
+    getRange(root, start, end, rides);
+  }
 
-  void printRange(RBTNode *node, int start, int end) {
+  void getRange(RBTNode *node, int start, int end, vector<string> &rides) {
     if (node == nullptr) {
       return;
     }
 
     if (node->ride.rideNumber > start) {
-      printRange(node->left, start, end);
+      getRange(node->left, start, end, rides);
     }
 
     if (node->ride.rideNumber >= start && node->ride.rideNumber <= end) {
-      cout << "(" << node->ride.rideNumber << "," << node->ride.rideCost << ","
-           << node->ride.tripDuration << ")"
-           << ",";
+      rides.push_back("(" + to_string(node->ride.rideNumber) + "," +
+                      to_string(node->ride.rideCost) + "," +
+                      to_string(node->ride.tripDuration) + ")");
     }
 
     if (node->ride.rideNumber < end) {
-      printRange(node->right, start, end);
+      getRange(node->right, start, end, rides);
     }
   }
 

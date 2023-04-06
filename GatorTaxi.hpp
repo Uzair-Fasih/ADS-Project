@@ -6,10 +6,20 @@ using namespace std;
 
 class GatorTaxi {
 private:
-public:
   MinHeap mh;
   RedBlackTree rbt;
+
+public:
+  /**
+   * @brief prints the triplet (rideNumber, rideCost, tripDuration);
+   * if the ride doesn't exists prints (0,0,0). This query is executed in
+   * O(log(n)) time
+   *
+   * @param rideNumber unique integer identifier for the ride
+   */
   void Print(int rideNumber) {
+
+    // Search operation in RBT is O(log(n)) time
     auto node = rbt.search(rideNumber);
 
     if (node == nullptr) {
@@ -22,10 +32,26 @@ public:
          << ride.tripDuration << ")" << endl;
   }
 
+  /**
+   * @brief prints all the rides between rideNumber1 and rideNumber2 inclusive
+   * prints (0,0,0) otherwise if no rides found
+   *
+   * @param rideNumber1
+   * @param rideNumber2
+   */
   void Print(int rideNumber1, int rideNumber2) {
-    // Prints all triplexts (r_x, rideCost, tripDuration) for
-    // which rideNumber1 <= r_x <= rideNumber2
-    rbt.printRange(rideNumber1, rideNumber2);
+    vector<string> rides;
+    rbt.getRange(rideNumber1, rideNumber2, rides);
+
+    for (int i = 0; i < rides.size(); i++) {
+      cout << rides[i];
+      if (i != rides.size() - 1)
+        cout << ",";
+    }
+
+    if (rides.size() == 0)
+      cout << "(0,0,0)";
+
     cout << endl;
   }
 
@@ -82,7 +108,8 @@ public:
     }
     auto ride = rbtNode->ride;
 
-    if (new_tripDuration < ride.tripDuration) {
+    if (new_tripDuration <= ride.tripDuration) {
+      rbtNode->ride.tripDuration = new_tripDuration;
       return;
     } else {
       this->CancelRide(rideNumber);
