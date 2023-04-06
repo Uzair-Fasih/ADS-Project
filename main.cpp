@@ -1,4 +1,14 @@
-#include <bits/stdc++.h>
+/**
+ * @file main.cpp
+ * @author Mohammad Uzair Fasih (mfasih@ufl.edu) [UFID: 6286-1020]
+ * @brief GatoxTaxi Implementation for Advanced Data Structures
+ * @version 0.1
+ * @date 2023-04-06
+ *
+ * @copyright MIT 2023
+ *
+ */
+
 #include <cstdio>
 #include <fstream>
 #include <iostream>

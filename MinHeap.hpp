@@ -39,7 +39,8 @@ public:
   }
 
   /**
-   * @brief Returns the Min Ride while also deleting it in the process
+   * @brief Returns the Min Ride while also deleting it in the process. rideCost
+   * is used as key. Ties are broken using lower tripDuration
    * @return MinHeapNode
    */
   MinHeapNode *getMin() {

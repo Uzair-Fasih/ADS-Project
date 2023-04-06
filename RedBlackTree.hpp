@@ -267,6 +267,12 @@ public:
     return node;
   }
 
+  /**
+   * @brief Remove a node from the red-black tree. If the node doesn't exist
+   * simply return. Operation works in O(log(n)) time.
+   *
+   * @param node
+   */
   void remove(RBTNode *node) {
 
     if (node == nullptr) {
@@ -360,11 +366,22 @@ public:
     delete node;
   }
 
-  void getRange(int start, int end, vector<string> &rides) {
+  void getRange(int start, int end, vector<Ride> &rides) {
     getRange(root, start, end, rides);
   }
 
-  void getRange(RBTNode *node, int start, int end, vector<string> &rides) {
+  /**
+   * @brief Get the rides within the range specified start and end. The rides
+   * are added to the rides vector passed by reference.The time complexity of
+   * using inorder traversal to get this range is O(k + log(n)), where k is the
+   * number of nodes in the range.
+   *
+   * @param node
+   * @param start
+   * @param end
+   * @param rides
+   */
+  void getRange(RBTNode *node, int start, int end, vector<Ride> &rides) {
     if (node == nullptr) {
       return;
     }
@@ -374,9 +391,7 @@ public:
     }
 
     if (node->ride.rideNumber >= start && node->ride.rideNumber <= end) {
-      rides.push_back("(" + to_string(node->ride.rideNumber) + "," +
-                      to_string(node->ride.rideCost) + "," +
-                      to_string(node->ride.tripDuration) + ")");
+      rides.push_back(node->ride);
     }
 
     if (node->ride.rideNumber < end) {
