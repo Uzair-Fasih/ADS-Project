@@ -19,10 +19,14 @@ class RBTNode;
 class MinHeapNode {
 public:
   Ride ride;
+  MinHeapNode *left, *right, *parent;
   RBTNode *external;
 
   MinHeapNode(Ride ride) {
     this->ride = ride;
+    left = nullptr;
+    right = nullptr;
+    parent = nullptr;
     external = nullptr;
   }
 };

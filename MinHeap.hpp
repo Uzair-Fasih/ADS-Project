@@ -1,91 +1,171 @@
 #include "Nodes.hpp"
+#include <queue>
 #include <vector>
 
 class MinHeap {
-public:
-  std::vector<MinHeapNode *> nodes;
+private:
+  MinHeapNode *root = nullptr;
 
+  MinHeapNode *getLastNode() {
+    if (!root) {
+      return nullptr;
+    }
+
+    std::queue<MinHeapNode *> q;
+    q.push(root);
+
+    MinHeapNode *lastNode = nullptr;
+
+    while (!q.empty()) {
+      lastNode = q.front();
+      q.pop();
+
+      if (lastNode->left) {
+        q.push(lastNode->left);
+      }
+
+      if (lastNode->right) {
+        q.push(lastNode->right);
+      }
+    }
+
+    return lastNode;
+  }
+
+  void heapify(MinHeapNode *node) {
+    while (true) {
+      MinHeapNode *scNode = node;
+
+      if (node->left &&
+          ((node->left->ride.rideCost < scNode->ride.rideCost) ||
+           ((node->left->ride).rideCost == (scNode->ride).rideCost &&
+            (node->left->ride).tripDuration < (scNode->ride).tripDuration))) {
+        scNode = node->left;
+      }
+
+      if (node->right &&
+          ((node->right->ride.rideCost < scNode->ride.rideCost) ||
+           ((node->right->ride).rideCost == (scNode->ride).rideCost &&
+            (node->right->ride).tripDuration < (scNode->ride).tripDuration))) {
+        scNode = node->right;
+      }
+
+      if (scNode == node) {
+        break;
+      }
+
+      std::swap(node->ride, scNode->ride);
+      std::swap(node->external, scNode->external);
+
+      if (node->external)
+        node->external->external = node;
+      if (scNode->external)
+        scNode->external->external = scNode;
+
+      node = scNode;
+    }
+  }
+
+public:
   /**
    * @brief Inserts a new ride in the min heap.
-   * Returns the newly added heap so to add external pointer
+   * Returns the newly added node so to add external pointer
    *
    * @param ride Ride information
    * @return MinHeapNode
    */
   MinHeapNode *insert(Ride ride) {
-    MinHeapNode *newNode = new MinHeapNode(ride);
-    nodes.push_back(newNode);
+    MinHeapNode *node = new MinHeapNode(ride);
 
-    if (nodes.size() == 1) {
-      return newNode;
+    if (root == nullptr) {
+      root = node;
+      return node;
     }
 
-    int idx = nodes.size() - 1;
-    int pIdx = (idx - 1) / 2;
+    std::queue<MinHeapNode *> q;
+    q.push(root);
 
-    while (idx > 0 &&
-           ((nodes[pIdx]->ride.rideCost > nodes[idx]->ride.rideCost) ||
-            ((nodes[pIdx]->ride).rideCost == (nodes[idx]->ride).rideCost &&
-             (nodes[pIdx]->ride).tripDuration >
-                 (nodes[idx]->ride).tripDuration))) {
+    while (!q.empty()) {
+      MinHeapNode *temp = q.front();
+      q.pop();
 
-      std::swap(nodes[pIdx], nodes[idx]);
-      idx = pIdx;
-      pIdx = (idx - 1) / 2;
+      if (temp->left == NULL) {
+        temp->left = node;
+        node->parent = temp;
+        break;
+      } else if (temp->right == NULL) {
+        temp->right = node;
+        node->parent = temp;
+        break;
+      } else {
+        q.push(temp->left);
+        q.push(temp->right);
+      }
     }
 
-    return newNode;
+    MinHeapNode *pnode = node->parent;
+
+    // Bubble up
+    while (pnode != nullptr &&
+           ((pnode->ride.rideCost > node->ride.rideCost) ||
+            ((pnode->ride).rideCost == (node->ride).rideCost &&
+             (pnode->ride).tripDuration > (node->ride).tripDuration))) {
+
+      std::swap(pnode->ride, node->ride);
+      std::swap(pnode->external, node->external);
+
+      if (pnode->external)
+        pnode->external->external = pnode;
+      if (node->external)
+        node->external->external = node;
+
+      node = pnode;
+      pnode = node->parent;
+    }
+
+    return node;
   }
 
   /**
-   * @brief Returns the Min Ride while also deleting it in the process. rideCost
-   * is used as key. Ties are broken using lower tripDuration
+   * @brief Returns the Min Ride while also deleting it in the process.
+   * rideCost is used as key. Ties are broken using lower tripDuration
    * @return MinHeapNode
    */
   MinHeapNode *getMin() {
-
-    if (nodes.empty()) {
+    if (root == nullptr) {
       return nullptr;
     }
 
-    MinHeapNode *minRide = nodes[0];
-    MinHeapNode *lastNode = nodes.back();
-    nodes.pop_back();
+    // Get largest node
+    MinHeapNode *lastNode = getLastNode();
 
-    if (nodes.empty()) {
+    MinHeapNode *minRide = new MinHeapNode(root->ride);
+    minRide->external = root->external;
+    if (minRide->external) {
+      minRide->external->external = minRide;
+    }
+
+    if (root->left == nullptr) {
+      root = root->right;
       return minRide;
     }
 
-    nodes[0] = lastNode;
-
-    int idx = 0;
-    while (true) {
-      int lcIdx = 2 * idx + 1;
-      int rcIdx = 2 * idx + 2;
-      int scIdx = idx;
-
-      if (lcIdx < nodes.size() &&
-          ((nodes[lcIdx]->ride.rideCost < nodes[scIdx]->ride.rideCost) ||
-           ((nodes[lcIdx]->ride).rideCost == (nodes[scIdx]->ride).rideCost &&
-            (nodes[lcIdx]->ride).tripDuration <
-                (nodes[scIdx]->ride).tripDuration)))
-        scIdx = lcIdx;
-
-      if (rcIdx < nodes.size() &&
-          ((nodes[rcIdx]->ride.rideCost < nodes[scIdx]->ride.rideCost) ||
-           ((nodes[rcIdx]->ride).rideCost == (nodes[scIdx]->ride).rideCost &&
-            (nodes[rcIdx]->ride).tripDuration <
-                (nodes[scIdx]->ride).tripDuration)))
-        scIdx = rcIdx;
-
-      ;
-      if (scIdx == idx)
-        break;
-
-      std::swap(nodes[idx], nodes[scIdx]);
-      idx = scIdx;
+    // Switch lastNode with root
+    root->ride = lastNode->ride;
+    root->external = lastNode->external;
+    if (root->external) {
+      root->external->external = root;
     }
 
+    // Delete the lastNode
+    if (lastNode->parent->left == lastNode) {
+      lastNode->parent->left = nullptr;
+    } else if (lastNode->parent->right == lastNode) {
+      lastNode->parent->right = nullptr;
+    }
+
+    // Bubble down
+    heapify(root);
     return minRide;
   }
 
@@ -94,67 +174,32 @@ public:
    * @param node The node to remove
    */
   void remove(MinHeapNode *node) {
-    // Find the index of the node to remove
-    int idx = -1;
-    for (int i = 0; i < nodes.size(); i++) {
-      if (nodes[i] == node) {
-        idx = i;
-        break;
-      }
+    if (node == nullptr) {
+      return;
     }
-
-    if (idx == -1) {
-      // Node not found in the heap
+    if (node == root) {
+      this->getMin();
       return;
     }
 
-    // Swap the node with the last node in the heap
-    std::swap(nodes[idx], nodes[nodes.size() - 1]);
-    nodes.pop_back();
+    // Get largest node
+    MinHeapNode *lastNode = getLastNode();
 
-    if (idx == nodes.size()) {
-      // Removed node was the last node in the heap
-      return;
+    // Switch lastNode with node
+    node->ride = lastNode->ride;
+    node->external = lastNode->external;
+    if (node->external) {
+      node->external->external = node;
     }
 
-    // Fix the heap by checking if the node needs to be bubbled up or down
-    int pIdx = (idx - 1) / 2;
-    while (idx > 0 &&
-           ((nodes[pIdx]->ride.rideCost > nodes[idx]->ride.rideCost) ||
-            ((nodes[pIdx]->ride).rideCost == (nodes[idx]->ride).rideCost &&
-             (nodes[pIdx]->ride).tripDuration >
-                 (nodes[idx]->ride).tripDuration))) {
-
-      std::swap(nodes[pIdx], nodes[idx]);
-      idx = pIdx;
-      pIdx = (idx - 1) / 2;
+    // Delete the lastNode
+    if (lastNode->parent && lastNode->parent->left == lastNode) {
+      lastNode->parent->left = nullptr;
+    } else if (lastNode->parent && lastNode->parent->right == lastNode) {
+      lastNode->parent->right = nullptr;
     }
 
-    int lcIdx, rcIdx, scIdx;
-    while (true) {
-      lcIdx = 2 * idx + 1;
-      rcIdx = 2 * idx + 2;
-      scIdx = idx;
-
-      if (lcIdx < nodes.size() &&
-          ((nodes[lcIdx]->ride.rideCost < nodes[scIdx]->ride.rideCost) ||
-           ((nodes[lcIdx]->ride).rideCost == (nodes[scIdx]->ride).rideCost &&
-            (nodes[lcIdx]->ride).tripDuration <
-                (nodes[scIdx]->ride).tripDuration)))
-        scIdx = lcIdx;
-
-      if (rcIdx < nodes.size() &&
-          ((nodes[rcIdx]->ride.rideCost < nodes[scIdx]->ride.rideCost) ||
-           ((nodes[rcIdx]->ride).rideCost == (nodes[scIdx]->ride).rideCost &&
-            (nodes[rcIdx]->ride).tripDuration <
-                (nodes[scIdx]->ride).tripDuration)))
-        scIdx = rcIdx;
-
-      if (scIdx == idx)
-        break;
-
-      std::swap(nodes[idx], nodes[scIdx]);
-      idx = scIdx;
-    }
+    // Bubble down
+    heapify(node);
   }
 };
