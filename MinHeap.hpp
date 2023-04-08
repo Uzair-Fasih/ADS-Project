@@ -1,6 +1,4 @@
 #include "Nodes.hpp"
-#include <queue>
-#include <vector>
 
 class MinHeap {
 private:
@@ -11,25 +9,41 @@ private:
       return nullptr;
     }
 
-    std::queue<MinHeapNode *> q;
-    q.push(root);
-
-    MinHeapNode *lastNode = nullptr;
-
-    while (!q.empty()) {
-      lastNode = q.front();
-      q.pop();
-
-      if (lastNode->left) {
-        q.push(lastNode->left);
+    MinHeapNode *curr = root;
+    while (curr->left || curr->right) {
+      while (curr->right) {
+        curr = curr->right;
       }
 
-      if (lastNode->right) {
-        q.push(lastNode->right);
+      while (curr->left) {
+        curr = curr->left;
       }
     }
 
-    return lastNode;
+    return curr;
+  }
+
+  MinHeapNode *getNextNode(MinHeapNode *node) {
+    if (node->left == nullptr) {
+      return node;
+    }
+
+    if (node->right == nullptr) {
+      return node;
+    }
+
+    MinHeapNode *foundNode;
+    foundNode = getNextNode(node->left);
+    if (foundNode) {
+      return foundNode;
+    }
+
+    foundNode = getNextNode(node->left);
+    if (foundNode) {
+      return foundNode;
+    }
+
+    return nullptr;
   }
 
   void heapify(MinHeapNode *node) {
@@ -82,25 +96,14 @@ public:
       return node;
     }
 
-    std::queue<MinHeapNode *> q;
-    q.push(root);
+    MinHeapNode *temp = getNextNode(root);
 
-    while (!q.empty()) {
-      MinHeapNode *temp = q.front();
-      q.pop();
-
-      if (temp->left == NULL) {
-        temp->left = node;
-        node->parent = temp;
-        break;
-      } else if (temp->right == NULL) {
-        temp->right = node;
-        node->parent = temp;
-        break;
-      } else {
-        q.push(temp->left);
-        q.push(temp->right);
-      }
+    if (temp->left == NULL) {
+      temp->left = node;
+      node->parent = temp;
+    } else if (temp->right == NULL) {
+      temp->right = node;
+      node->parent = temp;
     }
 
     MinHeapNode *pnode = node->parent;
